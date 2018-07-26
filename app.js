@@ -1,18 +1,7 @@
 "use strict"
 //搜索api
-var apiUrl = 'https://search.bilibili.com/api/search?';
-//查询json
-var queryJson = {
-    'search_type': 'video',
-    'keyword': '初音ミク',
-    'form_source': 'video_tag',
-    'spm_id_from': '333.338.v_tag.1',
-    'order': 'pubdate',
-    'duration': '0',
-    'tids': '30',
-    'page': '1'
-};
-
+var apiHost = 'api.bilibili.com'
+var apiPath = '/x/web-interface/search/all?';
 
 //必须关键词
 var keywords = [
@@ -82,14 +71,8 @@ function mix(keywords){
 
 var tasks = [];
 var task = {
-    'search_type': 'video',
     'keyword': '',
-    'form_source': 'video_tag',
-    'spm_id_from': '333.338.v_tag.1',
-    'order': 'pubdate',
-    'duration': '0',
-    'tids': '30',
-    'page': '1'
+    'form_source': 'banner_search',
 };
 
 var k = mix(keywords);
@@ -106,12 +89,21 @@ function query(task,callback) {
     const querystring = require('querystring');
 
     var resCollection;
-    var reqUrl = apiUrl + querystring.stringify(task);
+    var reqUrl = apiPath + querystring.stringify(task);
 
-    https.get(reqUrl, (res) => {
+
+    var options = {
+        hostname: apiHost,
+        path: reqUrl,
+        method: 'GET',
+        headers: {
+            'Referer': 'https://search.bilibili.com'
+        }
+    };
+    https.get(options, (res) => {
         //console.log('状态码：', res.statusCode);
         //console.log('请求头：', res.headers);
-
+        
         var rawData = '';
         res.on('data', (chunk) => { rawData += chunk; });
         res.on('end', () => {
@@ -142,7 +134,7 @@ function querycallback(result) {
 
     var arr = [];
     for (var i = 0; i < results.length; i++) {
-        arr = arr.concat(results[i].result);
+        arr = arr.concat(results[i].data.result.video);
     }
 
     console.log("本次结果汇总有：%s个", arr.length);
@@ -177,7 +169,7 @@ function toXlsx(arr){
     
     //sheet.addRow([3, 'Sam', new Date()]);
     
-    workbook.xlsx.writeFile('./test.xlsx')
+    workbook.xlsx.writeFile('./' + task.form_source + '.xlsx')
     .then(function() {
         // done
     });
