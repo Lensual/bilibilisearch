@@ -31,7 +31,7 @@ function x(arra,arrb){
     var arr=[true];
     for(var a=1;a<arra.length;a++){
         for(var b=1;b<arrb.length;b++){
-            arr.push(arra[a]+' '+arrb[b]);
+            arr.push(arra[a]+arrb[b]);
         }
     }
     return arr;
@@ -71,17 +71,24 @@ function mix(keywords){
 
 var tasks = [];
 var task = {
+    'search_type':'video',
     'keyword': '',
     'form_source': 'banner_search',
+    'page':1
 };
 
 var k = mix(keywords);
+
 for(var i=1;i<k.length;i++){
     var t = JSON.parse(JSON.stringify(task));;
     t.keyword=k[i];
     tasks.push(t);
+    console.log("关键词：" + t.keyword);
 }
+
 console.log("本次搜索关键词有：%s个", tasks.length);
+
+
 
 //查询开始
 function query(task,callback) {
@@ -114,6 +121,7 @@ function query(task,callback) {
                 //toXlsx(parsedData);
             } catch (e) {
                 console.error(e.message);
+                console.log(rawData);
             }
         });
 
@@ -122,14 +130,23 @@ function query(task,callback) {
     });
 }
 
+var page = 10;
+console.log("每关键词搜索页数：%s页", page);
+console.log("本次搜索次数：%s次", tasks.length * page);
 for (var i = 0; i < tasks.length; i++) {
-    query(tasks[i], querycallback);
+    for (var p = 1; p < page + 1; p++) {
+        tasks[i].page = p;
+        query(tasks[i], querycallback);
+    }
 }
+
+
+
 
 var results = [];
 function querycallback(result) {
     results.push(result);
-    if (results.length < tasks.length)
+    if (results.length < tasks.length*page)
         return;
 
     var arr = [];
