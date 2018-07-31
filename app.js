@@ -4,7 +4,7 @@ var bilibiliapi = require('./bilibili_api');
 var api = new bilibiliapi();
 
 //关键词
-var keywordsb = [
+var keywords = [
     false,
     'v4c',
     [
@@ -18,11 +18,6 @@ var keywordsb = [
             '中文', '中文曲', '中文原创', '中文翻唱'
         ]
     ]
-];
-
-var keywords = [
-    false,
-    'v4c'
 ];
 
 //枚举a与b二元组
