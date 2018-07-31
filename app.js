@@ -115,9 +115,11 @@ async function main() {
 
     //结果去重
     for (var i = 0; i < arr.length; i++) {
-        for (var j = 0; j < arr.length; j++) {
-            if (arr[i] == arr[j])
-                arr.splice[i, 1];
+        for (var j = i + 1; j < arr.length; j++) {
+            if (arr[i].aid === arr[j].aid) {
+                arr.splice(j, 1);
+                j--;
+            }
         }
     }
     console.log("本次结果去重有：%s个", arr.length);
