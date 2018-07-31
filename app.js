@@ -159,6 +159,8 @@ function toXlsx(name, arr) {
         { header: 'av号', key: 'aid' },
         { header: '标题', key: 'title' },
         { header: '作者', key: 'author' },
+        { header: '投稿分区', key: 'typename' },
+        { header: 'TAG', key: 'tag'},
         { header: '总播放数', key: 'view' },
         { header: '收藏人数', key: 'favorite' },
         { header: '总弹幕数', key: 'danmaku' },
