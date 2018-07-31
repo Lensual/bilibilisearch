@@ -19,6 +19,10 @@ var keywords = [
         ]
     ]
 ];
+//屏蔽关键词
+var keywordsBlacklist = [
+    '中文字幕'
+];
 
 var test = [
     false,
@@ -100,15 +104,22 @@ async function main(keywords) {
             var parsedData = null;
             try {
                 parsedData = await api.search(karr[i], 'video', 'banner_search', j);
+                //屏蔽关键词过滤
+                for (var k = 0; k < parsedData.data.result.video.length; k++) {
+                    for (var l = 0; l < keywordsBlacklist.length; l++) {
+                        if (parsedData.data.result.video[k].title.indexOf(keywordsBlacklist[l]) != -1) {
+                            parsedData.data.result.video.splice(k, 1);
+                            k--
+                            break;
+                        }
+                    }
+                }
+                results.push(parsedData);
             } catch (err) {
                 error.push(err);
                 console.error(err);
                 continue;
             }
-            results.push(parsedData);
-            //if (results.length < (karr.length - 1) * page - error.length)
-            //    continue;
-
         }
     }
 
@@ -160,7 +171,7 @@ function toXlsx(name, arr) {
         { header: '标题', key: 'title' },
         { header: '作者', key: 'author' },
         { header: '投稿分区', key: 'typename' },
-        { header: 'TAG', key: 'tag'},
+        { header: 'TAG', key: 'tag' },
         { header: '总播放数', key: 'view' },
         { header: '收藏人数', key: 'favorite' },
         { header: '总弹幕数', key: 'danmaku' },
