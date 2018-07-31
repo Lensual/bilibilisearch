@@ -20,6 +20,12 @@ var keywords = [
     ]
 ];
 
+var test = [
+    false,
+    'v4c',
+    'v4c'
+];
+
 //枚举a与b二元组
 function x(arra, arrb) {
     var arr = [true];
@@ -74,9 +80,9 @@ function autoSleep(count) {
     }
 }
 
-main();
+main(keywords);
 
-async function main() {
+async function main(keywords) {
     var results = [];
     var karr = mix(keywords);
     var page = 10;
@@ -128,7 +134,7 @@ async function main() {
     for (var i = 0; i < arr.length; i++) {
         autoSleep(count);
         count++;
-        console.log("获取详细信息：%s/%s", i+1, arr.length)
+        console.log("获取详细信息：%s/%s", i + 1, arr.length)
         try {
             parsedData = await api.videoInfo(arr[i].aid);
             Object.assign(arr[i], parsedData.data);
@@ -149,14 +155,31 @@ function toXlsx(name, arr) {
     var workbook = new Excel.Workbook();
     var sheet = workbook.addWorksheet('My Sheet');
 
-    var columns = [];
-    for (var key in arr[0]) {
-        columns.push({ header: key, key: key });
-    };
+    var columns = [
+        { header: 'av号', key: 'aid' },
+        { header: '标题', key: 'title' },
+        { header: '作者', key: 'author' },
+        { header: '总播放数', key: 'view' },
+        { header: '收藏人数', key: 'favorite' },
+        { header: '总弹幕数', key: 'danmaku' },
+        { header: '评论数量', key: 'reply' },
+        { header: '硬币数量', key: 'coin' },
+        { header: '分享人数', key: 'share' },
+        { header: '最高全站日排行', key: 'his_rank' },
+        { header: '现在全站日排行', key: 'now_rank' },
+        { header: '版权声明', key: 'copyright' }, // 1未经作者授权 禁止转载 //2未注明
+        { header: '发布日期', key: 'pubdate' },
+        //{ header: '查询日期', key: 'senddate' }  //未知
+        { header: '描述', key: 'description' },
+    ];
 
     sheet.columns = columns;
 
     for (var i = 0; i < arr.length; i++) {
+        //处理字段内容
+        arr[i].pubdate = formateDate(arr[i].pubdate);
+        arr[i].senddate = formateDate(arr[i].senddate);
+        //添加到表格
         sheet.addRow(arr[i]);
     }
 
@@ -166,5 +189,13 @@ function toXlsx(name, arr) {
         .then(function () {
             // done
         });
+
+}
+
+function formateDate(timeStamp) {
+    var unixTimestamp = require('unix-timestamp');
+    var date = unixTimestamp.toDate(timeStamp)
+    //yyyy-MM-dd HH:mm:ss
+    return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
 
 }
