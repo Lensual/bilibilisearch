@@ -18,12 +18,10 @@
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
   <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
   <ItemGroup>
+    <Compile Include="bilibili_api.js" />
     <Content Include="package-lock.json" />
     <Content Include="package.json" />
     <Compile Include="app.js" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="bilibilisearch" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <!--Do not delete the following Import Project.  While this appears to do nothing it is a marker for setting TypeScript properties before our import that depends on them.-->
