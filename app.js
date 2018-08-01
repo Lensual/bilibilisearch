@@ -104,19 +104,33 @@ async function main(keywords) {
             var parsedData = null;
             try {
                 parsedData = await api.search(karr[i], 'video', 'banner_search', j);
-                //屏蔽关键词过滤
+                //处理结果
                 for (var k = 0; k < parsedData.data.result.video.length; k++) {
+                    //删除标题中html标签
+                    do {
+                        var s = parsedData.data.result.video[k].title.indexOf('<');
+                        var e = parsedData.data.result.video[k].title.indexOf('>');
+                        if (s != -1 && e != -1) {
+                            var a = parsedData.data.result.video[k].title.substring(0, s);
+                            var b = parsedData.data.result.video[k].title.substring(e + 1);
+                            parsedData.data.result.video[k].title = a + b;
+                        }
+                    } while (s != -1 || e != -1);
+                    //屏蔽关键词过滤
                     for (var l = 0; l < keywordsBlacklist.length; l++) {
-                        if (parsedData.data.result.video[k].title.indexOf(keywordsBlacklist[l]) != -1) {
+                        if (parsedData.data.result.video[k].title.indexOf(keywordsBlacklist[l]) != -1)    //标题
+                            //|| parsedData.data.result.video[k].tag.indexOf(keywordsBlacklist[l]) != -1) {    //tag 会过滤多
                             parsedData.data.result.video.splice(k, 1);
                             k--
                             break;
                         }
                     }
                 }
-                results.push(parsedData);
+                results.push(parsedData.data.result.video);
             } catch (err) {
                 error.push(err);
+                console.error("出错关键词：%s", karr[i]);
+                console.error("页码：%s", j);
                 console.error(err);
                 continue;
             }
@@ -126,7 +140,7 @@ async function main(keywords) {
     //合并结果
     var arr = [];
     for (var i = 0; i < results.length; i++) {
-        arr = arr.concat(results[i].data.result.video);
+        arr = arr.concat(results[i]);
     }
     console.log("本次结果汇总有：%s个", arr.length);
 
