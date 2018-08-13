@@ -6,22 +6,15 @@ var api = new bilibiliapi();
 //关键词
 var keywords = [
     false,
-    'v4c',
-    [
-        true,
-        [
-            false,
-            '初音', 'miku', '初音未来', '初音ミク', 'ミク'
-        ],
-        [
-            false,
-            '中文', '中文曲', '中文原创', '中文翻唱'
-        ]
-    ]
+    '初音', 'miku', '初音未来', '初音ミク', 'ミク'
 ];
 //屏蔽关键词
 var keywordsBlacklist = [
-    '中文字幕'
+    '演唱会',
+	'中文曲',
+	'中文原创',
+	'中文翻唱',
+	'v4c'
 ];
 
 var test = [
@@ -89,7 +82,7 @@ main(keywords);
 async function main(keywords) {
     var results = [];
     var karr = mix(keywords);
-    var page = 10;
+    var page = 1;
     var error = [];
     console.log("本次搜索关键词有：%s个", karr.length - 1);
     console.log("每关键词搜索页数：%s页", page);
