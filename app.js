@@ -96,7 +96,7 @@ async function main(keywords) {
 
             var parsedData = null;
             try {
-                parsedData = await api.search(karr[i], 'video', 'banner_search', j);
+                parsedData = await api.search(karr[i], 'video', 'banner_search', j,  'pubdate', tids = 3); //tids=3 Music 
                 //处理结果
                 for (var k = 0; k < parsedData.data.result.video.length; k++) {
                     //删除标题中html标签
@@ -111,10 +111,10 @@ async function main(keywords) {
                     } while (s != -1 || e != -1);
                     //屏蔽关键词过滤
                     for (var l = 0; l < keywordsBlacklist.length; l++) {
-                        if (parsedData.data.result.video[k].title.indexOf(keywordsBlacklist[l]) != -1)    //标题
+                        if (parsedData.data.result.video[k].title.indexOf(keywordsBlacklist[l]) != -1) {    //标题
                             //|| parsedData.data.result.video[k].tag.indexOf(keywordsBlacklist[l]) != -1) {    //tag 会过滤多
                             parsedData.data.result.video.splice(k, 1);
-                            k--
+                            k--;
                             break;
                         }
                     }
