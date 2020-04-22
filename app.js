@@ -52,9 +52,9 @@ function sleep(n) {
 
 function autoSleep(count) {
     if (!(count % 10)) {
-        sleep(500);
-    } else {
         sleep(100);
+    } else {
+        // sleep(100);
     }
 }
 
@@ -63,7 +63,7 @@ main(config.keywords);
 async function main(keywords) {
     var results = [];
     var karr = mix(keywords);
-    var page = 1;
+    var page = config.page;
     var error = [];
     console.log("本次搜索关键词有：%s个", karr.length);
     console.log("每关键词搜索页数：%s页", page);
