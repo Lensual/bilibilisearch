@@ -50,12 +50,13 @@ function sleep(n) {
     Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, n);
 }
 
+//现在b站也没做流量限制，就不延迟了，反正也是至少一个rtt之后才会发下一个请求
 function autoSleep(count) {
-    if (!(count % 10)) {
-        sleep(100);
-    } else {
-        // sleep(100);
-    }
+    // if (!(count % 10)) {
+    //     sleep(500);
+    // } else {
+    //     sleep(100);
+    // }
 }
 
 main(config.keywords);
