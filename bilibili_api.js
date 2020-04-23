@@ -48,7 +48,7 @@ module.exports = class BilibiliApi {
     }
 
     //搜索
-    search(keyword = '', search_type = 'video', form_source = 'banner_search', page = 1, order = 'pubdate', tids = 3) {
+    search(keyword = '', search_type = 'video', form_source = 'banner_search', page = 1, order = 'pubdate', tids = '') {
         var reqPath = this.apiPathPerfix + '/search/all';
         return get(this.apiHost, reqPath, {
             'keyword': keyword,
@@ -56,7 +56,7 @@ module.exports = class BilibiliApi {
             'form_source': form_source,
             'page': page,
             'order': order,
-            'tids': 3
+            'tids': tids
         }, 'https://search.bilibili.com');
     }
 

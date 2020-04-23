@@ -1,33 +1,14 @@
 "use strict"
 
 var bilibiliapi = require('./bilibili_api');
+var config = require('./config');
 var api = new bilibiliapi();
-
-//关键词
-var keywords = [
-    false,
-    '初音', 'miku', '初音未来', '初音ミク', 'ミク'
-];
-//屏蔽关键词
-var keywordsBlacklist = [
-    '演唱会',
-	'中文曲',
-	'中文原创',
-	'中文翻唱',
-	'v4c'
-];
-
-var test = [
-    false,
-    'v4c',
-    'v4c'
-];
 
 //枚举a与b二元组
 function x(arra, arrb) {
-    var arr = [true];
-    for (var a = 1; a < arra.length; a++) {
-        for (var b = 1; b < arrb.length; b++) {
+    var arr = [];
+    for (var a = 0; a < arra.length; a++) {
+        for (var b = 0; b < arrb.length; b++) {
             arr.push(arra[a] + arrb[b]);
         }
     }
@@ -37,13 +18,13 @@ function x(arra, arrb) {
 //返回有效数据从1开始的关键词数组
 function mix(keywords) {
 
-    var arr = [""];
-    if (keywords[0]) {   //and
+    var arr = [];
+    if (!config.isUnion) {   //and
         arr.push("");
-        for (var i = 1; i < keywords.length; i++) {
+        for (var i = 0; i < keywords.length; i++) {
             var b;
             if (typeof (keywords[i]) == 'string') {
-                b = keywords[i];
+                b = [keywords[i]];
             } else {
                 b = mix(keywords[i]);
             }
@@ -51,12 +32,12 @@ function mix(keywords) {
 
         }
     } else {  //or
-        for (var i = 1; i < keywords.length; i++) {
+        for (var i = 0; i < keywords.length; i++) {
             if (typeof (keywords[i]) == 'string') {
                 arr.push(keywords[i]);
             } else {
                 var t = mix(keywords[i]);
-                for (var j = 1; j < t.length; j++) {
+                for (var j = 0; j < t.length; j++) {
                     arr.push(t[j]);
                 }
             }
@@ -69,26 +50,27 @@ function sleep(n) {
     Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, n);
 }
 
+//现在b站也没做流量限制，就不延迟了，反正也是至少一个rtt之后才会发下一个请求
 function autoSleep(count) {
-    if (!(count % 10)) {
-        sleep(500);
-    } else {
-        sleep(100);
-    }
+    // if (!(count % 10)) {
+    //     sleep(500);
+    // } else {
+    //     sleep(100);
+    // }
 }
 
-main(keywords);
+main(config.keywords);
 
 async function main(keywords) {
     var results = [];
     var karr = mix(keywords);
-    var page = 1;
+    var page = config.page;
     var error = [];
-    console.log("本次搜索关键词有：%s个", karr.length - 1);
+    console.log("本次搜索关键词有：%s个", karr.length);
     console.log("每关键词搜索页数：%s页", page);
-    console.log("本次搜索次数：%s次", (karr.length - 1) * page);
+    console.log("本次搜索次数：%s次", karr.length * page);
     var count = 0;
-    for (var i = 1; i < karr.length; i++) {
+    for (var i = 0; i < karr.length; i++) {
         console.log("关键词：" + karr[i]);
         for (var j = 1; j <= page; j++) {
             autoSleep(count);
@@ -96,7 +78,7 @@ async function main(keywords) {
 
             var parsedData = null;
             try {
-                parsedData = await api.search(karr[i], 'video', 'banner_search', j,  'pubdate', tids = 3); //tids=3 Music 
+                parsedData = await api.search(karr[i], 'video', 'banner_search', j,  'pubdate', config.tids); //tids=3 Music 
                 //处理结果
                 for (var k = 0; k < parsedData.data.result.video.length; k++) {
                     //删除标题中html标签
@@ -110,8 +92,8 @@ async function main(keywords) {
                         }
                     } while (s != -1 || e != -1);
                     //屏蔽关键词过滤
-                    for (var l = 0; l < keywordsBlacklist.length; l++) {
-                        if (parsedData.data.result.video[k].title.indexOf(keywordsBlacklist[l]) != -1) {    //标题
+                    for (var l = 0; l < config.keywordsBlacklist.length; l++) {
+                        if (parsedData.data.result.video[k].title.indexOf(config.keywordsBlacklist[l]) != -1) {    //标题
                             //|| parsedData.data.result.video[k].tag.indexOf(keywordsBlacklist[l]) != -1) {    //tag 会过滤多
                             parsedData.data.result.video.splice(k, 1);
                             k--;
@@ -205,7 +187,7 @@ function toXlsx(name, arr) {
 
     //sheet.addRow([3, 'Sam', new Date()]);
 
-    workbook.xlsx.writeFile('./' + name + '.xlsx')
+    workbook.xlsx.writeFile(config.filePath)
         .then(function () {
             // done
         });
