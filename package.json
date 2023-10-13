@@ -9,7 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "exceljs": "^1.1.3",
+    "exceljs": "^1.15.0",
     "unix-timestamp": "^0.2.0"
   }
 }
